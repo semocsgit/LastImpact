@@ -48,8 +48,13 @@ public abstract class Enemy extends Sprite
 	
 	private void createPhysics(ITextureRegion region, PhysicsWorld physicsWorld)
 	{	
-		FixtureDef def = PhysicsFactory.createFixtureDef(0, 0, 0);
-		def.isSensor = true;
+		FixtureDef def = PhysicsFactory.createFixtureDef(1, 1, 1);
+		//def.isSensor = true;
+		if(region == ResourcesManager.levelBound_region)
+		{
+			body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.StaticBody, def);
+			body.setUserData(getSprite());
+		}
 		if(region == ResourcesManager.bird_region)
 		{	
 			body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.KinematicBody, def);
@@ -74,11 +79,14 @@ public abstract class Enemy extends Sprite
 				{  
 					if (getX() - getWidth() < 0)
 					{
-						
+						setX(getWidth()/2+15);
 						getBody().setLinearVelocity((getBody().getLinearVelocity().x * -1), 0);
 					}
 					if (getX() + getWidth() > 680 )
+					{
+						setX(getWidth()/2-15);
 						getBody().setLinearVelocity(getBody().getLinearVelocity().x * -1, 0);
+					}
 				}
 				
 				if(getSprite().getTextureRegion() == ResourcesManager.platform2_region)

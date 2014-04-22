@@ -35,7 +35,7 @@ public class ResourcesManager
 	public int launchVelocity = 25;
 	public int boostValue = 200;
 	public int spawnRate = 2;
-	public int upgradePoints = 0;
+	public int upgradePoints = 2000;
 	public int slowdown = -300;
 	
 	public int u1Pos = -400;

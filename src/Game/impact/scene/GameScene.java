@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.andengine.engine.camera.Camera;
+
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.IEntity;
@@ -14,6 +14,11 @@ import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.scene.menu.MenuScene;
+import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
+import org.andengine.entity.scene.menu.item.IMenuItem;
+import org.andengine.entity.scene.menu.item.SpriteMenuItem;
+import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
@@ -22,7 +27,6 @@ import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.util.GLState;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
@@ -61,12 +65,17 @@ import Game.impact.object.Enemy;
 import Game.impact.object.Player;
 
 
-public class GameScene extends BaseScene implements IOnSceneTouchListener, SensorEventListener
+public class GameScene extends BaseScene implements IOnSceneTouchListener, SensorEventListener, IOnMenuItemClickListener
 {
 	private int score = 0;
 	private int l;
 	private int b;
 	private int s;
+	
+	private MenuScene menuChildScene;
+	
+	private final int MENU_PLAY = 0;
+	private final int MENU_UPGRADE = 1;
 	
 	private HUD gameHUD;
 	private Text scoreText;
@@ -100,6 +109,37 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Senso
 	private boolean firstTouch = false;
 	private float pX,pY;
 	
+	public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY)
+	{
+		switch(pMenuItem.getID())
+		{
+		case MENU_PLAY:
+			SceneManager.getInstance().loadGameScene(engine);
+			return true;
+		case MENU_UPGRADE:
+			SceneManager.getInstance().loadUpgradeScene(engine);
+			default:
+				return false;
+		}
+	}
+	
+	private void createMenuChildScene()
+	{
+		menuChildScene = new MenuScene(camera);
+		menuChildScene.setPosition(340,600);
+		final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, resourcesManager.play_region, vbom), 1.2f, 1);
+		final IMenuItem upgradeMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_UPGRADE, resourcesManager.options_region, vbom), 1.2f, 1);
+		menuChildScene.addMenuItem(playMenuItem);
+		menuChildScene.addMenuItem(upgradeMenuItem);
+		menuChildScene.buildAnimations();
+		menuChildScene.setBackgroundEnabled(true);
+		playMenuItem.setPosition(50, +55);
+		upgradeMenuItem.setPosition(50, -55);
+		menuChildScene.setOnMenuItemClickListener(this);
+		setChildScene(menuChildScene);
+		
+	}
+		
 	public void destroyPhysicsWorld()
 	{
 	    engine.runOnUpdateThread(new Runnable()
@@ -281,8 +321,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Senso
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVELBOUND))
 				{
-					levelObject = new Sprite(x,y,ResourcesManager.levelBound_region, vbom);
-					PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF).setUserData("levelBound");
+					Sprite sprite = new Sprite(x,y,ResourcesManager.levelBound_region, vbom);
+					levelObject = new Enemy( sprite, vbom, physicsWorld)
+					{	
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed) 
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							
+							if (player.collidesWith(this))
+							{	
+							}
+						}
+					};
 	
 				} 
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3))
@@ -343,6 +394,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener, Senso
 								createGameOverText();
 								displayGameOverText();
 								player.getBody().setActive(false);
+								createMenuChildScene();
 							}
 						}
 					};

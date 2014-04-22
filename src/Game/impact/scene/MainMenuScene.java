@@ -1,6 +1,6 @@
 package Game.impact.scene;
 
-import org.andengine.engine.Engine;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;

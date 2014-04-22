@@ -132,6 +132,7 @@ public class UpgradeScene extends BaseScene implements IOnMenuItemClickListener
 					resourcesManager.upgradePoints -= 600;
 					updateChangeable();
 				}
+				return true;
 			case DURA:
 				if(resourcesManager.u4C == 0 && resourcesManager.upgradePoints >= 200)
 				{
@@ -212,10 +213,10 @@ public class UpgradeScene extends BaseScene implements IOnMenuItemClickListener
 	private void changeables()
 	{	
 		upg = new Text(340, 300, resourcesManager.font, "Upgrade Points = " + resourcesManager.upgradePoints, vbom);
-		u1 = new Sprite(270 + resourcesManager.u1Pos, 1085, resourcesManager.u1_region, vbom);
-		u2 = new Sprite(270 + resourcesManager.u2Pos, 868, resourcesManager.u1_region, vbom);
-		u3 = new Sprite(270 + resourcesManager.u3Pos, 655, resourcesManager.u1_region, vbom);
-		u4 = new Sprite(270 + resourcesManager.u4Pos, 440, resourcesManager.u1_region, vbom);
+		u1 = new Sprite(300 + resourcesManager.u1Pos, 990, resourcesManager.u1_region, vbom);
+		u2 = new Sprite(300 + resourcesManager.u2Pos, 810, resourcesManager.u1_region, vbom);
+		u3 = new Sprite(300 + resourcesManager.u3Pos, 655, resourcesManager.u1_region, vbom);
+		u4 = new Sprite(300 + resourcesManager.u4Pos, 475, resourcesManager.u1_region, vbom);
 		attachChild(u1);
 		attachChild(u2);
 		attachChild(u3);

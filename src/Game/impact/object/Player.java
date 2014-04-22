@@ -64,21 +64,22 @@ public abstract class Player extends AnimatedSprite
 				if(launched)
 					if(!(isAnimationRunning()))
 					animate(new long[]{95,95,95,95},0,3, true);
+				
 				if(body.getLinearVelocity().y-last.y >10)
 					body.setLinearVelocity(last);
 				
 				if (getX() - getWidth() < 0) 
 				{
 					setVelocityX((-body.getLinearVelocity().x));
-					setX(getWidth()/2+5);
+					
 				   body.applyLinearImpulse(new Vector2(5,0), body.getWorldCenter());
 				} else if (getX() + getWidth() > 680) 
 				{
 					
 					setVelocityX((-body.getLinearVelocity().x));
-					setX(675-getWidth()/2);
+					
 					body.applyLinearImpulse(new Vector2(-5,0), body.getWorldCenter());
-				}
+				}  
 				
 				last = body.getLinearVelocity();
 	        }
